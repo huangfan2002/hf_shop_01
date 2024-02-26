@@ -20,3 +20,9 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+
+
+# git config us huangfan_email@njust.edu.cn
+#
+# git config user.email "huangfan_email@njust.edu.cn"
+# git config user.name "huangfan2002"
