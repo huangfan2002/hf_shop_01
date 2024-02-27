@@ -40,8 +40,13 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                    <li><a href="{% url 'shop:login' %}">登录</a></li>
-                    <li><a href="{% url 'shop:register' %}">注册</a></li>
+                {% if front_user %}
+                    <li><a href="">您好：{{ front_user.username }}</a></li>
+                    <li><a href="{% url 'book:logout' %}">退出</a></li>
+                {% else %}
+                    <li><a href="{% url 'book:login' %}">登录</a></li>
+                    <li><a href="{% url 'book:register' %}">注册</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>

@@ -65,6 +65,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                # 使用front_user指代后端传回前端的相关数据的对象
+                'utils.content_process.front_user',
             ],
             'builtins': [
                 # 在模板中使用static标签
