@@ -8,6 +8,7 @@ from apps.shops.models import UserInfoModel
 def index(request):
     return render(request, 'index.html')
 
+
 def register(request):
     if request.method == 'GET':
         return render(request, 'register.html')
@@ -32,6 +33,7 @@ def register(request):
         )
         return JsonResponse({'code': 200})
 
+
 def login(request):
     if request.method == 'GET':
         return render(request, 'login.html')
@@ -48,6 +50,7 @@ def login(request):
         request.session['username'] = user.username
         request.session['user_id'] = user.id
         return JsonResponse({'code': 200})
+
 
 def logout(request):
     # 退出登录

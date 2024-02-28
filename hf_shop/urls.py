@@ -21,11 +21,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('apps.shops.urls', namespace='book')),
+    path('', include('apps.shops.urls', namespace='shop')),
 ]
 
 
-# git config us huangfan_email@njust.edu.cn
-#
-# git config user.email "huangfan_email@njust.edu.cn"
-# git config user.name "huangfan2002"
