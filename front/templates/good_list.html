@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block title %}
+    商品信息
+{% endblock %}
+
+{% block body %}
+    <h1>商品信息</h1>
+    <div class="panel panel-default" style="margin-top: 10px">
+        <div class="panel-heading">商品信息</div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>名称</th>
+                <th>价格</th>
+                <th>图片</th>
+                <th>数量</th>
+                <th>所属分类</th>
+                <th>查看详情</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for good in goods %}
+                <tr>
+                    <td>{{ good.name }}</td>
+                    <td>{{ good.price }}</td>
+                    <td>
+                        <img src="/image/{{ good.image }}" alt="" style="width: 70px;height: 100px">
+                    </td>
+                    <td>{{ good.number }}</td>
+                    <td>{{ good.category.name }}</td>
+                    <td>
+                        <a href="/good_detail/{{ good.id }}">
+                            <button class="btn btn-sm btn-prev">查看详情</button>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
