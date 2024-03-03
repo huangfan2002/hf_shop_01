@@ -10,4 +10,13 @@
 
 {% block body %}
 
+
+
+    <div class="sm-container">
+        <div class="list-group">
+            {% for category in categories %}
+                <a href="/good_list/{{ category.id }}" class="list-group-item">{{ category.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
