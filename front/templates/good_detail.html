@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block head %}
+    <script src="{% static 'js/good_detail.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+    <div class="post-container">
+        <h2>{{ good.name }}</h2>
+        <p class="post-info-group">
+            <span>所属类别：{{ good.category.name }}</span>
+        </p>
+        <div class="">
+            <img src="/image/{{ good.image }}" alt="" style="width: 200px;height: 300px">
+        </div>
+
+        <div class="post-content">
+            <p>价格：{{ good.price }}元</p>
+            <p>介绍：{{ good.content }}</p>
+            <p>数量：{{ good.number }}</p>
+            <p>上架时间：{{ good.create_time }}</p>
+        </div>
+    </div>
+
+{% endblock %}
