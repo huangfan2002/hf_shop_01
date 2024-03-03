@@ -24,4 +24,5 @@ urlpatterns = [
     path('', include('apps.shops.urls', namespace='shop')),
 ]
 
-
+# 配置媒体资源的url
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

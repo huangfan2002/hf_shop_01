@@ -5,12 +5,14 @@
 {% endblock %}
 
 {% block head %}
+    <link rel="stylesheet" href="{% static 'css/post_detail.css' %}">
     <script src="{% static 'js/good_detail.js' %}"></script>
 {% endblock %}
 
 {% block body %}
     <div class="post-container">
         <h2>{{ good.name }}</h2>
+
         <p class="post-info-group">
             <span>所属类别：{{ good.category.name }}</span>
         </p>
@@ -23,6 +25,36 @@
             <p>介绍：{{ good.content }}</p>
             <p>数量：{{ good.number }}</p>
             <p>上架时间：{{ good.create_time }}</p>
+        </div>
+
+        <div class="" style="margin-top: 20px;border: 2px solid cyan;width: 150px;border-radius: 5px;padding: 10px">
+            {% if not flag %}
+                <label for="">请您评分：</label>
+                <select name="" id="input-score" class="form-control" style="width: 100px">
+                    <option value="5">5分</option>
+                    <option value="4">4分</option>
+                    <option value="3">3分</option>
+                    <option value="2">2分</option>
+                    <option value="1">1分</option>
+                </select>
+                <button class="btn btn-danger btn-sm" id="score-btn" style="margin-top: 10px" good-id="{{ good.id }}">
+                    提交评分
+                </button>
+            {% else %}
+                <label for="">您的评分：{{ flag.score }}</label>
+                 <label for="">修改评分：</label>
+                <select name="" id="input-score" class="form-control" style="width: 100px">
+                    <option value="5">5分</option>
+                    <option value="4">4分</option>
+                    <option value="3">3分</option>
+                    <option value="2">2分</option>
+                    <option value="1">1分</option>
+                </select>
+                <button class="btn btn-danger btn-sm" id="score-btn" style="margin-top: 10px" good-id="{{ good.id }}">
+                    提交评分
+                </button>
+
+            {% endif %}
         </div>
     </div>
 

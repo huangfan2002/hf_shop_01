@@ -51,4 +51,81 @@ class GoodModel(models.Model):
     def __str__(self):
         return self.name
 
-# python manage.py makemigrations shop
+class OrderModel(models.Model):
+    good = models.ForeignKey('GoodModel', on_delete=models.CASCADE, verbose_name='所属商品')
+    user = models.ForeignKey('UserInfoModel', on_delete=models.CASCADE, verbose_name='所属用户')
+    is_buy = models.BooleanField(default=False, verbose_name='是否购买')
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+
+    class Meta:
+        db_table = 'db_order'
+        verbose_name = '用户订单'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.good.name
+
+
+class HotModel(models.Model):
+    name = models.CharField(max_length=100, verbose_name='名称')
+    good = models.ForeignKey('GoodModel', on_delete=models.CASCADE, verbose_name='热门商品')
+
+    class Meta:
+        db_table = 'db_hot'
+        verbose_name = '热门商品'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
+
+
+class CommentModel(models.Model):
+    user = models.ForeignKey('UserInfoModel', on_delete=models.CASCADE, verbose_name='所属用户')
+    good = models.ForeignKey('GoodModel', on_delete=models.CASCADE, verbose_name='所属商品')
+    content = models.TextField(verbose_name='评论内容')
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+
+    class Meta:
+        db_table = 'db_comment'
+        verbose_name = '评论信息'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.user.username
+
+
+class CollectModel(models.Model):
+    user = models.ForeignKey('UserInfoModel', on_delete=models.CASCADE, verbose_name='所属用户')
+    good = models.ForeignKey('GoodModel', on_delete=models.CASCADE, verbose_name='所属商品')
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+
+    class Meta:
+        db_table = 'db_collect'
+        verbose_name = '收藏信息'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.user.username
+
+
+class RatingModel(models.Model):
+    good = models.ForeignKey('GoodModel', on_delete=models.CASCADE, verbose_name='所属商品')
+    user = models.ForeignKey('UserInfoModel', on_delete=models.CASCADE, verbose_name='所属用户')
+    score = models.IntegerField(verbose_name='评分')
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+
+    class Meta:
+        db_table = 'db_rating'
+        verbose_name = '评分信息'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return str(self.score)
+
+
+
+
+
+
+
+# python manage.py makemigrations shops

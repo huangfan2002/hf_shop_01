@@ -1,12 +1,17 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
-from apps.shops.models import UserInfoModel
+from apps.shops.models import UserInfoModel, GoodModel, CategoryModel, CommentModel, RatingModel
 
 
 # Create your views here.
 def index(request):
-    return render(request, 'index.html')
+    categories = CategoryModel.objects.all()
+    context = {
+        'categories': categories
+    }
+
+    return render(request, 'index.html', context=context)
 
 
 def register(request):
@@ -56,3 +61,48 @@ def logout(request):
     # 退出登录
     flag = request.session.clear()
     return redirect('/')
+
+
+def good_list(request, category_id):
+    if request.method == 'GET':
+        # 商品列表
+        goods = GoodModel.objects.filter(
+            category_id=category_id
+        )
+        context = {
+            'goods': goods
+        }
+        return render(request, 'good_list.html', context=context)
+
+
+
+def good_detail(request, good_id):
+    # 图书详情界面
+    good = GoodModel.objects.filter(
+        id=good_id
+    ).first()
+    user_id = request.session.get('user_id')
+
+    flag = RatingModel.objects.filter(
+        user_id=user_id,
+        good_id=good_id
+    ).last()
+
+    context = {
+        'good': good,
+        'flag':flag
+    }
+    return render(request, 'good_detail.html', context=context)
+
+
+def add_score(request):
+    # 添加评分
+    user_id = request.session.get('user_id')
+    good_id = request.POST.get('good_id')
+    score = request.POST.get('score')
+    RatingModel.objects.create(
+        user_id=user_id,
+        good_id=good_id,
+        score=score
+    )
+    return JsonResponse({'code': 200})
