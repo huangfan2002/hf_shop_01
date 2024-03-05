@@ -2,6 +2,33 @@ var GoodDetail = function () {
 
 };
 
+GoodDetail.prototype.listenAddCommentEvent = function () {
+    $("#add-comment-btn").on("click", function (event) {
+        event.preventDefault();
+        var $this = $(this);
+        var good_id = $this.attr('good-id');
+        var content = $('#comment-textarea').val();
+
+        $.ajax({
+            url: "/add_comment/",
+            type: 'POST',
+            data: {
+                good_id,
+                content
+            },
+            success: function (result) {
+                if (result['code'] === 200) {
+                    alert('发布成功');
+                    location.reload()
+                } else {
+                    alert(result['message']);
+                }
+            }
+        })
+    });
+};
+
+
 GoodDetail.prototype.listenAddScoreEvent = function () {
     $("#score-btn").on("click", function (event) {
         event.preventDefault();
@@ -29,6 +56,7 @@ GoodDetail.prototype.listenAddScoreEvent = function () {
 
 GoodDetail.prototype.run = function () {
     this.listenAddScoreEvent();
+    this.listenAddCommentEvent();
 };
 
 

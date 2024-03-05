@@ -15,4 +15,7 @@ urlpatterns = [
 
     # 添加评分
     path('add_score/', views.add_score, name='add_score'),
+
+    # 添加评论
+    path('add_comment/', views.add_comment, name='add_comment'),
 ]
