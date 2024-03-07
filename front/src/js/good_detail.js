@@ -54,9 +54,34 @@ GoodDetail.prototype.listenAddScoreEvent = function () {
     });
 };
 
+GoodDetail.prototype.listenAddCollectEvent = function () {
+    $("#add-collect-btn").on("click", function (event) {
+        event.preventDefault();
+        var $this = $(this);
+        var good_id = $this.attr('good-id');
+        $.ajax({
+            url: "/add_collect/",
+            type: 'POST',
+            data: {
+                good_id
+            },
+            success: function (result) {
+                if (result['code'] === 200) {
+                    alert('收藏成功');
+                    location.reload()
+                } else {
+                    alert(result['message']);
+                }
+            }
+        })
+    });
+};
+
+
 GoodDetail.prototype.run = function () {
     this.listenAddScoreEvent();
     this.listenAddCommentEvent();
+    this.listenAddCollectEvent();
 };
 
 

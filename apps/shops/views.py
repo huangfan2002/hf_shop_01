@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
-from apps.shops.models import UserInfoModel, GoodModel, CategoryModel, CommentModel, RatingModel
+from apps.shops.models import UserInfoModel, GoodModel, CategoryModel, CommentModel, RatingModel, CollectModel
 
 
 # Create your views here.
@@ -129,3 +129,35 @@ def add_comment(request):
         good_id=good_id
     )
     return JsonResponse({'code': 200})
+
+
+def add_collect(request):
+    # 添加收藏
+    good_id = request.POST.get('good_id')
+    user_id = request.session.get('user_id')
+    flag = CollectModel.objects.filter(
+        user_id=user_id,
+        good_id=good_id
+    ).first()
+    if flag:
+        return JsonResponse({'code': 400, 'message': '该商品已收藏'})
+    CollectModel.objects.create(
+        user_id=user_id,
+        good_id=good_id
+    )
+    return JsonResponse({'code': 200})
+
+
+def delete_collect(request):
+    # 取消收藏
+    collect_id = request.POST.get('collect_id')
+    collect = CollectModel.objects.get(id=collect_id)
+    collect.delete()
+    return JsonResponse({'code': 200})
+
+
+def my_collect(request):
+    # 我的收藏
+    user_id = request.session.get('user_id')
+    collects = CollectModel.objects.filter(user_id=user_id)
+    return render(request, 'my_collect.html', {'collects': collects})

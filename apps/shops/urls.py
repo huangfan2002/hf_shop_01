@@ -18,4 +18,9 @@ urlpatterns = [
 
     # 添加评论
     path('add_comment/', views.add_comment, name='add_comment'),
+
+    # 添加收藏，删除收藏，展示收藏
+    path('add_collect/', views.add_collect, name='add_collect'),
+    path('delete_collect/', views.delete_collect, name='delete_collect'),
+    path('my_collect/', views.my_collect, name='my_collect'),
 ]

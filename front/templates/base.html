@@ -37,6 +37,11 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li class=""><a href="/">首页<span class="sr-only">(current)</span></a></li>
+                <li><a href="/admin/" target="_blank">后台管理111</a></li>
+                {% if front_user %}
+                    <li><a href="{% url 'shop:my_collect' %}">我的收藏</a></li>
+                {% endif %}
+
             </ul>
 
             <ul class="nav navbar-nav navbar-right">

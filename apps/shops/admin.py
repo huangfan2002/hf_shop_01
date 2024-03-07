@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 # Register your models here.
 
-from .models import GoodModel, CategoryModel, UserInfoModel
+from .models import GoodModel, CategoryModel, UserInfoModel, CommentModel, RatingModel
 
 
 class UserInfoAdmin(admin.ModelAdmin):
@@ -26,8 +26,19 @@ class GoodAdmin(admin.ModelAdmin):
     image_tag.short_description = '照片'
 
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'good', 'content')
+
+
+class RatingAdmin(admin.ModelAdmin):
+    list_display = ('good', 'user', 'score', 'create_time')
+
+
 admin.site.register(UserInfoModel, UserInfoAdmin)
 admin.site.register(CategoryModel, CategoryAdmin)
 admin.site.register(GoodModel, GoodAdmin)
+
+admin.site.register(CommentModel, CommentAdmin)
+admin.site.register(RatingModel, RatingAdmin)
 
 admin.site.site_header = '商城后台管理系统'

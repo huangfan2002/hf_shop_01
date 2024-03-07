@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <script src="{% static 'js/my_collect.js' %}"></script>
+{% endblock %}
+
+{% block title %}
+    我的收藏
+{% endblock %}
+
+{% block body %}
+    <h1>我的收藏</h1>
+    <div class="panel panel-default" style="margin-top: 10px">
+        <div class="panel-heading">收藏信息</div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>名称</th>
+                <th>图片</th>
+                <th>时间</th>
+                <th>操作</th>
+                <th>查看详情</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for collect in collects %}
+                <tr>
+                    <td>{{ collect.good.name }}</td>
+                    <td>
+                        <img src="/image/{{ collect.good.image }}" alt="" style="width: 70px;height: 100px">
+                    </td>
+                    <td>{{ collect.create_time }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary delete-collect-btn" collect-id="{{ collect.id }}">取消收藏</button>
+                    </td>
+                    <td>
+                        <a href="/good_detail/{{ collect.good.id }}">
+                            <button class="btn btn-sm btn-prev">查看详情</button>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
