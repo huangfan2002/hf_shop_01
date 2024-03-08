@@ -1,7 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
-from apps.shops.models import UserInfoModel, GoodModel, CategoryModel, CommentModel, RatingModel, CollectModel
+from apps.shops.models import UserInfoModel, GoodModel, CategoryModel, CommentModel, RatingModel, CollectModel, \
+    OrderModel
 
 
 # Create your views here.
@@ -161,3 +162,44 @@ def my_collect(request):
     user_id = request.session.get('user_id')
     collects = CollectModel.objects.filter(user_id=user_id)
     return render(request, 'my_collect.html', {'collects': collects})
+
+
+def my_order(request):
+    # 我的订单
+    user_id = request.session.get('user_id')
+    orders = OrderModel.objects.filter(user_id=user_id)
+    return render(request, 'my_order.html', {'orders': orders})
+
+
+def add_order(request):
+    # 借阅图书
+    good_id = request.POST.get('good_id')
+    user_id = request.session.get('user_id')
+    good = GoodModel.objects.get(id=good_id)
+    if good.number == 0:
+        return JsonResponse({'code': 400, 'message': '该商品暂无库存，请联系管理员'})
+    flag = OrderModel.objects.filter(
+        user_id=user_id,
+        good_id=good_id,
+        # is_return=False
+    ).first()
+    good.number -= 1
+    good.save()
+    OrderModel.objects.create(
+        user_id=user_id,
+        good_id=good_id
+    )
+    return JsonResponse({'code': 200})
+
+
+def cancel_order(request):
+    # 取消订单
+    order_id = request.POST.get('order_id')
+    order = OrderModel.objects.get(id=order_id)
+    order.is_return = True
+    order.good.number += 1
+    order.good.save()
+    order.save()
+    return JsonResponse({'code': 200})
+
+

@@ -51,6 +51,7 @@ class GoodModel(models.Model):
     def __str__(self):
         return self.name
 
+
 class OrderModel(models.Model):
     good = models.ForeignKey('GoodModel', on_delete=models.CASCADE, verbose_name='所属商品')
     user = models.ForeignKey('UserInfoModel', on_delete=models.CASCADE, verbose_name='所属用户')
@@ -121,11 +122,5 @@ class RatingModel(models.Model):
 
     def __str__(self):
         return str(self.score)
-
-
-
-
-
-
 
 # python manage.py makemigrations shops

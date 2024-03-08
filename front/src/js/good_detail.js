@@ -28,7 +28,6 @@ GoodDetail.prototype.listenAddCommentEvent = function () {
     });
 };
 
-
 GoodDetail.prototype.listenAddScoreEvent = function () {
     $("#score-btn").on("click", function (event) {
         event.preventDefault();
@@ -78,10 +77,35 @@ GoodDetail.prototype.listenAddCollectEvent = function () {
 };
 
 
+GoodDetail.prototype.listenAddOrderEvent = function () {
+    $("#add-order-btn").on("click", function (event) {
+        event.preventDefault();
+        var $this = $(this);
+        var good_id = $this.attr('good-id');
+        $.ajax({
+            url: "/add_order/",
+            type: 'POST',
+            data: {
+                good_id
+            },
+            success: function (result) {
+                if (result['code'] === 200) {
+                    alert('借阅成功');
+                    location.reload()
+                } else {
+                    alert(result['message']);
+                }
+            }
+        })
+    });
+};
+
+
 GoodDetail.prototype.run = function () {
     this.listenAddScoreEvent();
     this.listenAddCommentEvent();
     this.listenAddCollectEvent();
+    this.listenAddOrderEvent();
 };
 
 

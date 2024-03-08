@@ -23,4 +23,10 @@ urlpatterns = [
     path('add_collect/', views.add_collect, name='add_collect'),
     path('delete_collect/', views.delete_collect, name='delete_collect'),
     path('my_collect/', views.my_collect, name='my_collect'),
+
+    # 购买商品，展示订单，取消订单
+    path('my_order/', views.my_order, name='my_order'),
+    path('add_order/', views.add_order, name='add_order'),
+    path('cancel_order/', views.cancel_order, name='cancel_order'),
+
 ]
