@@ -31,10 +31,14 @@
                     <td>{{ order.create_time }}</td>
                     <td>
                         {% if order.is_buy %}
-                            <p style="color: green">取消成功</p>
+                            <p style="color: green">购买成功</p>
                         {% else %}
-                            <button class="btn btn-sm btn-danger cancel-order-btn" order-id="{{ order.id }}">取消订单</button>
+                            <p style="color: green">取消成功</p>
+{#                            <button class="btn btn-sm btn-danger cancel-order-btn" order-id="{{ order.id }}">取消订单</button>#}
                         {% endif %}
+                    </td>
+                    <td>
+                         <button class="btn btn-sm btn-danger cancel-order-btn" order-id="{{ order.id }}">取消订单</button>
                     </td>
                 </tr>
             {% endfor %}

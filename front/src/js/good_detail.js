@@ -90,7 +90,7 @@ GoodDetail.prototype.listenAddOrderEvent = function () {
             },
             success: function (result) {
                 if (result['code'] === 200) {
-                    alert('借阅成功');
+                    alert('购买成功');
                     location.reload()
                 } else {
                     alert(result['message']);

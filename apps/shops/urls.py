@@ -29,4 +29,7 @@ urlpatterns = [
     path('add_order/', views.add_order, name='add_order'),
     path('cancel_order/', views.cancel_order, name='cancel_order'),
 
+    #商品推荐
+    path('recommend_goods/', views.recommend_goods, name='recommend_goods'),
+
 ]

@@ -1,3 +1,4 @@
+import numpy as np
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
@@ -172,7 +173,7 @@ def my_order(request):
 
 
 def add_order(request):
-    # 借阅图书
+    # 购买物品
     good_id = request.POST.get('good_id')
     user_id = request.session.get('user_id')
     good = GoodModel.objects.get(id=good_id)
@@ -182,6 +183,7 @@ def add_order(request):
         user_id=user_id,
         good_id=good_id,
         # is_return=False
+        is_buy=True
     ).first()
     good.number -= 1
     good.save()
@@ -203,3 +205,89 @@ def cancel_order(request):
     return JsonResponse({'code': 200})
 
 
+def calculate_cosine_similarity(user_ratings1, user_ratings2):
+    # 将用户1的图书评分存入字典，键为图书ID，值为评分
+    good_ratings1 = {rating.good_id: rating.score for rating in user_ratings1}
+    # 将用户2的图书评分存入字典，键为图书ID，值为评分
+    good_ratings2 = {rating.good_id: rating.score for rating in user_ratings2}
+
+    # 找出两个用户共同评价过的图书
+    common_goods = set(good_ratings1.keys()) & set(good_ratings2.keys())
+
+    if len(common_goods) == 0:
+        return 0.0  # 无共同评价的图书，相似度为0
+
+    # 提取共同评价图书的评分，存入NumPy数组
+    user1_scores = np.array([good_ratings1[good_id] for good_id in common_goods])
+    user2_scores = np.array([good_ratings2[good_id] for good_id in common_goods])
+
+    # 计算余弦相似度
+    cosine_similarity = np.dot(user1_scores, user2_scores) / (
+            np.linalg.norm(user1_scores) * np.linalg.norm(user2_scores))
+    return cosine_similarity
+
+
+def user_based_recommendation(request, user_id):
+    try:
+        # 获取目标用户对象
+        target_user = UserInfoModel.objects.get(pk=user_id)
+    except UserInfoModel.DoesNotExist:
+        return JsonResponse({'error': '用户不存在'}, status=404)
+
+    # 获取目标用户的图书评分记录
+    target_user_ratings = RatingModel.objects.filter(user=target_user)
+
+    # 用于存储推荐图书的字典
+    recommended_goods = {}
+
+    # 遍历除目标用户外的所有其他用户
+    for other_user in UserInfoModel.objects.exclude(pk=user_id):
+        # 获取其他用户的图书评分记录
+        other_user_ratings = RatingModel.objects.filter(user=other_user)
+
+        # 计算目标用户与其他用户的相似度
+        similarity = calculate_cosine_similarity(target_user_ratings, other_user_ratings)
+
+        if similarity > 0:
+            # 遍历其他用户评价的图书
+            for good_rating in other_user_ratings:
+                # 仅考虑目标用户未评价过的图书
+                if good_rating.good not in target_user_ratings.values_list('good', flat=True):
+                    if good_rating.good.id in recommended_goods:
+                        # 累积相似度加权的评分和相似度
+                        recommended_goods[good_rating.good.id]['score'] += similarity * good_rating.score
+                        recommended_goods[good_rating.good.id]['similarity'] += similarity
+                    else:
+                        # 创建推荐图书的记录
+                        recommended_goods[good_rating.book.id] = {'score': similarity * good_rating.score,
+                                                                  'similarity': similarity}
+
+    # 将推荐图书按照加权评分排序
+    sorted_recommended_goods = sorted(recommended_goods.items(), key=lambda x: x[1]['score'], reverse=True)
+
+    # 获取排名靠前的推荐图书的ID
+    top_recommended_goods = [book_id for book_id, _ in sorted_recommended_goods[:5]]
+
+    # 构建响应数据
+    response_data = []
+    for good_id in top_recommended_goods:
+        good = GoodModel.objects.get(pk=good_id)
+        similarity = recommended_goods[good_id]['similarity']
+        response_data.append({
+            'name': good.name,
+            'content': good.content,
+            'id': good.id,
+            'image': good.image,
+            'category': good.category,
+            'number': good.number,
+            'similarity': similarity,
+        })
+
+    return response_data
+
+
+def recommend_goods(request):
+    # 图书推荐
+    user_id = request.session.get('user_id')
+    resp_list = user_based_recommendation(request, user_id)
+    return render(request, 'recommend_goods.html', {'resp_list': resp_list})
