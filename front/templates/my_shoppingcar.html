@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
 {% block head %}
-    <script src="{% static 'js/my_order.js' %}"></script>
+    <script src="{% static 'js/my_shoppingcar.js' %}"></script>
 {% endblock %}
 
 {% block title %}
-    我的购买
+    我的购物车
 {% endblock %}
 
 {% block body %}
-    <h1>我的购买</h1>
+    <h1>我的购物车</h1>
     <div class="panel panel-default" style="margin-top: 10px">
         <div class="panel-heading">购买信息</div>
         <table class="table">
@@ -18,28 +18,28 @@
                 <th>名称</th>
                 <th>图片</th>
                 <th>购买时间</th>
-                <th>状态</th>
+{#                <th>状态</th>#}
                 <th>操作</th>
             </tr>
             </thead>
             <tbody>
-            {% for order in orders %}
+            {% for sp in shoppingcars %}
                 <tr>
-                    <td>{{ order.good.name }}</td>
+                    <td>{{ sp.good.name }}</td>
                     <td>
-                        <img src="/image/{{ order.good.image }}" alt="" style="width: 70px;height: 100px">
+                        <img src="/image/{{ sp.good.image }}" alt="" style="width: 70px;height: 100px">
                     </td>
-                    <td>{{ order.create_time }}</td>
-                    <td>
-                        {% if order.is_buy %}
-                            <p style="color: green">购买成功</p>
-                        {% else %}
-                            <p style="color: green">取消成功</p>
+                    <td>{{ sp.create_time }}</td>
+{#                    <td>#}
+{#                        {% if order.is_buy %}#}
+{#                            <p style="color: green">购买成功</p>#}
+{#                        {% else %}#}
+{#                            <p style="color: green">取消成功</p>#}
 {#                            <button class="btn btn-sm btn-danger cancel-order-btn" order-id="{{ order.id }}">取消订单</button>#}
-                        {% endif %}
-                    </td>
+{#                        {% endif %}#}
+{#                    </td>#}
                     <td>
-                         <button class="btn btn-sm btn-danger cancel-order-btn" order-id="{{ order.id }}">取消订单</button>
+                         <button class="btn btn-sm btn-danger cancel-order-btn" sp-id="{{ sp.id }}">移出购物车</button>
                     </td>
                 </tr>
             {% endfor %}

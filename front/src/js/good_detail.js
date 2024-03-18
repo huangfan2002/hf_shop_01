@@ -2,6 +2,30 @@ var GoodDetail = function () {
 
 };
 
+
+GoodDetail.prototype.listenAddShoppingCar = function () {
+    $("#add-shoppingcar-btn").on("click", function (event) {
+       event.preventDefault();
+        var $this = $(this);
+        var good_id = $this.attr('good-id');
+        $.ajax({
+            url: "/add_shoppingcar/",
+            type: 'POST',
+            data: {
+                good_id
+            },
+            success: function (result) {
+                if (result['code'] === 200) {
+                    alert('加入购物车成功');
+                    location.reload()
+                } else {
+                    alert(result['message']);
+                }
+            }
+        })
+    });
+};
+
 GoodDetail.prototype.listenAddCommentEvent = function () {
     $("#add-comment-btn").on("click", function (event) {
         event.preventDefault();
@@ -106,6 +130,7 @@ GoodDetail.prototype.run = function () {
     this.listenAddCommentEvent();
     this.listenAddCollectEvent();
     this.listenAddOrderEvent();
+    this.listenAddShoppingCar();
 };
 
 

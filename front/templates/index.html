@@ -13,12 +13,18 @@
     <div class="lg-container">
 
     </div>
-
-    <div class="sm-container">
-        <div class="list-group">
+    <div class="container" >
+        <div class="" style="width: 300px">
             {% for category in categories %}
                 <a href="/good_list/{{ category.id }}" class="list-group-item">{{ category.name }}</a>
             {% endfor %}
         </div>
     </div>
+{#    <div class="sm-container">#}
+{#        <div class="list-group">#}
+{#            {% for category in categories %}#}
+{#                <a href="/good_list/{{ category.id }}" class="list-group-item">{{ category.name }}</a>#}
+{#            {% endfor %}#}
+{#        </div>#}
+{#    </div>#}
 {% endblock %}

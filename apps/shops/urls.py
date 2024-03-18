@@ -29,7 +29,11 @@ urlpatterns = [
     path('add_order/', views.add_order, name='add_order'),
     path('cancel_order/', views.cancel_order, name='cancel_order'),
 
-    #商品推荐
+    # 商品推荐
     path('recommend_goods/', views.recommend_goods, name='recommend_goods'),
 
+    # 添加购物车
+    path('add_shoppingcar/', views.add_shoppingcar, name='add_shoppingcar'),
+    path('delete_shoppingcar/', views.delete_shoppingcar, name='delete_shoppingcar'),
+    path('my_shoppingcar/', views.my_shoppingcar, name='my_shoppingcar'),
 ]

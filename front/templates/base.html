@@ -9,6 +9,7 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/front_base.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     {% block head %}
 
     {% endblock %}
@@ -41,6 +42,7 @@
                 {% if front_user %}
                     <li><a href="{% url 'shop:my_collect' %}">我的收藏</a></li>
                     <li><a href="{% url 'shop:my_order' %}">我的订单</a></li>
+                    <li><a href="{% url 'shop:my_shoppingcar' %}">我的购物车</a></li>
                 {% endif %}
 
             </ul>

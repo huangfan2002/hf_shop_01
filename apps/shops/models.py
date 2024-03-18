@@ -20,6 +20,25 @@ class UserInfoModel(models.Model):
         return self.username
 
 
+# class UserActionModel(models.Model):
+#     username = models.ForeignKey('UserInfoModel', on_delete=models.CASCADE, verbose_name='用户')
+#
+#     action = models.CharField(verbose_name='动作')
+
+class ShoppingCarModel(models.Model):
+    user = models.ForeignKey('UserInfoModel', on_delete=models.CASCADE, verbose_name='用户')
+    good = models.ForeignKey('GoodModel', on_delete=models.CASCADE, verbose_name='商品')
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+
+    class Meta:
+        db_table = 'db_shoppingcar'
+        verbose_name = '购物车信息'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.user.username
+
+
 # 类别信息
 class CategoryModel(models.Model):
     name = models.CharField(max_length=100, verbose_name='名称')

@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
 from apps.shops.models import UserInfoModel, GoodModel, CategoryModel, CommentModel, RatingModel, CollectModel, \
-    OrderModel
+    OrderModel, ShoppingCarModel
 
 
 # Create your views here.
@@ -107,6 +107,16 @@ def add_score(request):
     user_id = request.session.get('user_id')
     good_id = request.POST.get('good_id')
     score = request.POST.get('score')
+
+    # 如果初始没有评分，创建评分，如果有评分 修改评分
+    flag = RatingModel.objects.filter(
+        user_id=user_id,
+        good_id=good_id
+    ).first()
+    if flag:
+        flag.score = score
+        flag.save()
+        return JsonResponse({'code': 200})
     RatingModel.objects.create(
         user_id=user_id,
         good_id=good_id,
@@ -124,7 +134,6 @@ def add_comment(request):
     good_id = request.POST.get('good_id')
     if not content:
         return JsonResponse({'code': 400, 'message': '内容不能为空'})
-
     CommentModel.objects.create(
         user_id=user_id,
         content=content,
@@ -179,17 +188,12 @@ def add_order(request):
     good = GoodModel.objects.get(id=good_id)
     if good.number == 0:
         return JsonResponse({'code': 400, 'message': '该商品暂无库存，请联系管理员'})
-    flag = OrderModel.objects.filter(
-        user_id=user_id,
-        good_id=good_id,
-        # is_return=False
-        is_buy=True
-    ).first()
     good.number -= 1
     good.save()
     OrderModel.objects.create(
         user_id=user_id,
-        good_id=good_id
+        good_id=good_id,
+        is_buy=True
     )
     return JsonResponse({'code': 200})
 
@@ -198,7 +202,7 @@ def cancel_order(request):
     # 取消订单
     order_id = request.POST.get('order_id')
     order = OrderModel.objects.get(id=order_id)
-    order.is_return = True
+    order.is_buy = False
     order.good.number += 1
     order.good.save()
     order.save()
@@ -206,18 +210,18 @@ def cancel_order(request):
 
 
 def calculate_cosine_similarity(user_ratings1, user_ratings2):
-    # 将用户1的图书评分存入字典，键为图书ID，值为评分
+    # 将用户1的商品评分存入字典，键为商品ID，值为评分
     good_ratings1 = {rating.good_id: rating.score for rating in user_ratings1}
-    # 将用户2的图书评分存入字典，键为图书ID，值为评分
+    # 将用户2的商品评分存入字典，键为商品ID，值为评分
     good_ratings2 = {rating.good_id: rating.score for rating in user_ratings2}
 
-    # 找出两个用户共同评价过的图书
+    # 找出两个用户共同评价过的商品
     common_goods = set(good_ratings1.keys()) & set(good_ratings2.keys())
 
     if len(common_goods) == 0:
-        return 0.0  # 无共同评价的图书，相似度为0
+        return 0.0  # 无共同评价的商品，相似度为0
 
-    # 提取共同评价图书的评分，存入NumPy数组
+    # 提取共同评价商品的评分，存入NumPy数组
     user1_scores = np.array([good_ratings1[good_id] for good_id in common_goods])
     user2_scores = np.array([good_ratings2[good_id] for good_id in common_goods])
 
@@ -234,38 +238,38 @@ def user_based_recommendation(request, user_id):
     except UserInfoModel.DoesNotExist:
         return JsonResponse({'error': '用户不存在'}, status=404)
 
-    # 获取目标用户的图书评分记录
+    # 获取目标用户的商品评分记录
     target_user_ratings = RatingModel.objects.filter(user=target_user)
 
-    # 用于存储推荐图书的字典
+    # 用于存储推荐商品的字典
     recommended_goods = {}
 
     # 遍历除目标用户外的所有其他用户
     for other_user in UserInfoModel.objects.exclude(pk=user_id):
-        # 获取其他用户的图书评分记录
+        # 获取其他用户的商品评分记录
         other_user_ratings = RatingModel.objects.filter(user=other_user)
 
         # 计算目标用户与其他用户的相似度
         similarity = calculate_cosine_similarity(target_user_ratings, other_user_ratings)
 
         if similarity > 0:
-            # 遍历其他用户评价的图书
+            # 遍历其他用户评价的商品
             for good_rating in other_user_ratings:
-                # 仅考虑目标用户未评价过的图书
+                # 仅考虑目标用户未评价过的商品
                 if good_rating.good not in target_user_ratings.values_list('good', flat=True):
                     if good_rating.good.id in recommended_goods:
                         # 累积相似度加权的评分和相似度
                         recommended_goods[good_rating.good.id]['score'] += similarity * good_rating.score
                         recommended_goods[good_rating.good.id]['similarity'] += similarity
                     else:
-                        # 创建推荐图书的记录
+                        # 创建推荐商品的记录
                         recommended_goods[good_rating.book.id] = {'score': similarity * good_rating.score,
                                                                   'similarity': similarity}
 
-    # 将推荐图书按照加权评分排序
+    # 将推荐商品按照加权评分排序
     sorted_recommended_goods = sorted(recommended_goods.items(), key=lambda x: x[1]['score'], reverse=True)
 
-    # 获取排名靠前的推荐图书的ID
+    # 获取排名靠前的推荐商品的ID
     top_recommended_goods = [book_id for book_id, _ in sorted_recommended_goods[:5]]
 
     # 构建响应数据
@@ -287,7 +291,35 @@ def user_based_recommendation(request, user_id):
 
 
 def recommend_goods(request):
-    # 图书推荐
+    # 商品推荐
     user_id = request.session.get('user_id')
     resp_list = user_based_recommendation(request, user_id)
     return render(request, 'recommend_goods.html', {'resp_list': resp_list})
+
+
+# 添加购物车
+def add_shoppingcar(request):
+    good_id = request.POST.get('good_id')
+    user_id = request.session.get('user_id')
+    good = GoodModel.objects.get(id=good_id)
+    if good.number == 0:
+        return JsonResponse({'code': 400, 'message': '该商品暂无库存，请联系管理员'})
+    ShoppingCarModel.objects.create(
+        user_id=user_id,
+        good_id=good_id,
+    )
+    return JsonResponse({'code': 200})
+
+
+# 移出购物车
+def delete_shoppingcar(request):
+    my_shopping_car_id = request.POST.get('my_shopping_car_id')
+    delete_shoppingcar = ShoppingCarModel.objects.get(id=my_shopping_car_id)
+    delete_shoppingcar.delete()
+    return JsonResponse({'code': 200})
+
+
+def my_shoppingcar(request):
+    user_id = request.session.get('user_id')
+    shopping_car = ShoppingCarModel.objects.filter(user_id=user_id)
+    return render(request, 'my_shoppingcar.html', {'shoppingcars': shopping_car})
