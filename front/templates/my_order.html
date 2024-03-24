@@ -39,7 +39,10 @@
                         {% endif %}
                     </td>
                     <td>
-                         <button class="btn btn-sm btn-danger cancel-order-btn" order-id="{{ order.id }}">取消订单</button>
+                        {% if order.is_buy %}
+                            <button class="btn btn-sm btn-danger cancel-order-btn" order-id="{{ order.id }}">取消订单</button>
+                        {% else %}
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}

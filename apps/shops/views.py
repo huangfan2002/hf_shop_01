@@ -78,7 +78,7 @@ def good_list(request, category_id):
 
 
 def good_detail(request, good_id):
-    # 图书详情界面
+    # 商品详情界面
     good = GoodModel.objects.filter(
         id=good_id
     ).first()
@@ -200,6 +200,7 @@ def add_order(request):
 
 def cancel_order(request):
     # 取消订单
+
     order_id = request.POST.get('order_id')
     order = OrderModel.objects.get(id=order_id)
     order.is_buy = False
@@ -323,3 +324,22 @@ def my_shoppingcar(request):
     user_id = request.session.get('user_id')
     shopping_car = ShoppingCarModel.objects.filter(user_id=user_id)
     return render(request, 'my_shoppingcar.html', {'shoppingcars': shopping_car})
+
+
+def buy_shoppingcar(request):
+    good_id = request.POST.get('good_id')
+    user_id = request.session.get('user_id')
+    good = GoodModel.objects.get(id=good_id)
+    if good.number == 0:
+        return JsonResponse({'code': 400, 'message': '该商品暂无库存，请联系管理员'})
+    good.number -= 1
+    good.save()
+    OrderModel.objects.create(
+        user_id=user_id,
+        good_id=good_id,
+        is_buy=True
+    )
+    my_shopping_car_id = request.POST.get('good_id')
+    delete_shoppingcar = ShoppingCarModel.objects.get(id=my_shopping_car_id)
+    delete_shoppingcar.delete()
+    return JsonResponse({'code': 200})

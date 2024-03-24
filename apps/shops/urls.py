@@ -36,4 +36,5 @@ urlpatterns = [
     path('add_shoppingcar/', views.add_shoppingcar, name='add_shoppingcar'),
     path('delete_shoppingcar/', views.delete_shoppingcar, name='delete_shoppingcar'),
     path('my_shoppingcar/', views.my_shoppingcar, name='my_shoppingcar'),
+    path('buy_shoppingcar/',views.buy_shoppingcar,name='buy_shoppingcar'),
 ]
