@@ -8,6 +8,8 @@ class UserInfoModel(models.Model):
     username = models.CharField(max_length=100, verbose_name='用户名')
     password = models.CharField(max_length=100, verbose_name='密码')
     phone = models.CharField(max_length=100, verbose_name='手机号')
+    gender = models.CharField(default='未知',max_length=2,verbose_name='性别')
+    age = models.IntegerField(default=18,verbose_name='年龄')
     address = models.CharField(max_length=100, verbose_name='地址')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
@@ -42,6 +44,7 @@ class ShoppingCarModel(models.Model):
 # 类别信息
 class CategoryModel(models.Model):
     name = models.CharField(max_length=100, verbose_name='名称')
+    gender = models.CharField(default='未知',max_length=2,verbose_name='性别相关')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
     class Meta:
@@ -105,6 +108,7 @@ class CommentModel(models.Model):
     content = models.TextField(verbose_name='评论内容')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
+
     class Meta:
         db_table = 'db_comment'
         verbose_name = '评论信息'
@@ -126,6 +130,24 @@ class CollectModel(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class GoodActionModel(models.Model):
+    user = models.ForeignKey('UserInfoModel', on_delete=models.CASCADE, verbose_name='所属用户')
+    gender = models.CharField(max_length=2,verbose_name='性别')
+    age = models.IntegerField(verbose_name='年龄')
+    good = models.ForeignKey('GoodModel', on_delete=models.CASCADE, verbose_name='所属商品')
+    category = models.ForeignKey('CategoryModel', on_delete=models.CASCADE, verbose_name='所属分类')
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    action = models.CharField(max_length=10, verbose_name='操作')
+
+    class Meta:
+        db_table = 'db_action'
+        verbose_name = '交互信息'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return str(self.action)
 
 
 class RatingModel(models.Model):

@@ -6,11 +6,11 @@ from .models import GoodModel, CategoryModel, UserInfoModel, CommentModel, Ratin
 
 
 class UserInfoAdmin(admin.ModelAdmin):
-    list_display = ('username', 'password', 'phone', 'address', 'create_time')
+    list_display = ('username', 'password', 'phone', 'age','gender','address', 'create_time')
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'create_time')
+    list_display = ('name','gender','create_time')
 
 
 class GoodAdmin(admin.ModelAdmin):
